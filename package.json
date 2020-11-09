@@ -1,27 +1,27 @@
 {
-  "name": "@metamask/inpage-provider",
+  "name": "@alayanetwork/inpage-provider",
   "version": "6.1.0",
-  "description": "A JavaScript Ethereum provider that connects over a WebExtension port.",
+  "description": "A JavaScript PlatON provider that connects over a WebExtension port.",
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext js,json",
     "lint:fix": "eslint . --ext js,json --fix"
   },
-  "author": "MetaMask",
+  "author": "Samurai",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/MetaMask/inpage-provider.git"
+    "url": "git+ssh://git@github.com/AlayaNetwork/samurai-inpage-provider.git"
   },
   "keywords": [
-    "MetaMask",
-    "Ethereum",
+    "Samurai",
+    "PlatON",
     "Provider"
   ],
   "bugs": {
-    "url": "https://github.com/MetaMask/inpage-provider/issues"
+    "url": "https://github.com/AlayaNetwork/samurai-inpage-provider/issues"
   },
-  "homepage": "https://github.com/MetaMask/inpage-provider#readme",
+  "homepage": "https://github.com/AlayaNetwork/samurai-inpage-provider#readme",
   "files": [
     "src/"
   ],

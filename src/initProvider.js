@@ -1,13 +1,13 @@
 const MetamaskInpageProvider = require('./MetamaskInpageProvider')
 
 /**
-   * Initializes a MetamaskInpageProvider and (optionally) sets it on window.ethereum.
+   * Initializes a MetamaskInpageProvider and (optionally) sets it on window.alaya.
    *
    * @param {Object} opts - An options bag.
    * @param {Object} opts.connectionStream - A Node.js stream.
    * @param {number} opts.maxEventListeners - The maximum number of event listeners.
    * @param {boolean} opts.shouldSendMetadata - Whether the provider should send page metadata.
-   * @param {boolean} opts.shouldSetOnWindow - Whether the provider should be set as window.ethereum
+   * @param {boolean} opts.shouldSetOnWindow - Whether the provider should be set as window.alaya
    * @returns {MetamaskInpageProvider | Proxy} The initialized provider (whether set or not).
    */
 function initProvider ({
@@ -37,13 +37,13 @@ function initProvider ({
 }
 
 /**
- * Sets the given provider instance as window.ethereum and dispatches the
+ * Sets the given provider instance as window.alaya and dispatches the
  * 'ethereum#initialized' event on window.
  *
  * @param {MetamaskInpageProvider} providerInstance - The provider instance.
  */
 function setGlobalProvider (providerInstance) {
-  window.ethereum = providerInstance
+  window.alaya = providerInstance
   window.dispatchEvent(new Event('ethereum#initialized'))
 }
 

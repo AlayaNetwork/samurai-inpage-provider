@@ -71,7 +71,7 @@ const NOOP = () => {}
 // constants
 
 const EMITTED_NOTIFICATIONS = [
-  'eth_subscription', // per eth-json-rpc-filters/subscriptionManager
+  'platon_subscription', // per eth-json-rpc-filters/subscriptionManager
 ]
 
 module.exports = {

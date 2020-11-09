@@ -94,11 +94,11 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
       connectionStream,
       mux,
       connectionStream,
-      this._handleDisconnect.bind(this, 'MetaMask'),
+      this._handleDisconnect.bind(this, 'Alaya-MetaMask'),
     )
 
     // subscribe to metamask public config (one-way)
-    this._publicConfigStore = new ObservableStore({ storageKey: 'MetaMask-Config' })
+    this._publicConfigStore = new ObservableStore({ storageKey: 'Alaya-MetaMask-Config' })
 
     // handle isUnlocked changes, and chainChanged and networkChanged events
     this._publicConfigStore.subscribe((state) => {
@@ -109,9 +109,9 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
           // this will get the exposed accounts, if any
           try {
             this._rpcRequest(
-              { method: 'eth_accounts', params: [] },
+              { method: 'platon_accounts', params: [] },
               NOOP,
-              true, // indicating that eth_accounts _should_ update accounts
+              true, // indicating that platon_accounts _should_ update accounts
             )
           } catch (_) { /* no-op */ }
         } else {
@@ -135,14 +135,14 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
     })
 
     pump(
-      mux.createStream('publicConfig'),
+      mux.createStream('publicConfiga'),
       asStream(this._publicConfigStore),
       // RPC requests should still work if only this stream fails
-      logStreamDisconnectWarning.bind(this, 'MetaMask PublicConfigStore'),
+      logStreamDisconnectWarning.bind(this, 'Alaya-MetaMask PublicConfigStore'),
     )
 
     // ignore phishing warning message (handled elsewhere)
-    mux.ignoreStream('phishing')
+    mux.ignoreStream('phishinga')
 
     // setup own event listeners
 
@@ -156,9 +156,9 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
     const jsonRpcConnection = createJsonRpcStream()
     pump(
       jsonRpcConnection.stream,
-      mux.createStream('provider'),
+      mux.createStream('providera'),
       jsonRpcConnection.stream,
-      this._handleDisconnect.bind(this, 'MetaMask RpcProvider'),
+      this._handleDisconnect.bind(this, 'Alaya-MetaMask RpcProvider'),
     )
 
     // handle RPC requests via dapp-side rpc engine
@@ -366,15 +366,15 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
       }
 
       if (
-        payload.method === 'eth_accounts' ||
-        payload.method === 'eth_requestAccounts'
+        payload.method === 'platon_accounts' ||
+        payload.method === 'platon_requestAccounts'
       ) {
 
         // handle accounts changing
         cb = (err, res) => {
           this._handleAccountsChanged(
             res.result || [],
-            payload.method === 'eth_accounts',
+            payload.method === 'platon_accounts',
             isInternal,
           )
           callback(err, res)
@@ -410,7 +410,7 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
    *
    * @param {string[]} accounts - The new accounts value.
    * @param {boolean} isEthAccounts - Whether the accounts value was returned by
-   * a call to eth_accounts.
+   * a call to platon_accounts.
    * @param {boolean} isInternal - Whether the accounts value was returned by an
    * internally initiated request.
    */
@@ -420,7 +420,7 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
 
     if (!Array.isArray(accounts)) {
       log.error(
-        'MetaMask: Received non-array accounts parameter. Please report this bug.',
+        'Alaya-MetaMask: Received non-array accounts parameter. Please report this bug.',
         accounts,
       )
       _accounts = []
@@ -429,11 +429,11 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
     // emit accountsChanged if anything about the accounts array has changed
     if (!dequal(this._state.accounts, _accounts)) {
 
-      // we should always have the correct accounts even before eth_accounts
+      // we should always have the correct accounts even before platon_accounts
       // returns, except in cases where isInternal is true
       if (isEthAccounts && this._state.accounts !== undefined && !isInternal) {
         log.error(
-          `MetaMask: 'eth_accounts' unexpectedly updated accounts. Please report this bug.`,
+          `MetaMask: 'platon_accounts' unexpectedly updated accounts. Please report this bug.`,
           _accounts,
         )
       }
@@ -561,7 +561,7 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
 
   /**
    * DEPRECATED.
-   * Equivalent to: ethereum.request('eth_requestAccounts')
+   * Equivalent to: ethereum.request('platon_requestAccounts')
    *
    * @returns {Promise<Array<string>>} - A promise that resolves to an array of addresses.
    */
@@ -575,7 +575,7 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
     return new Promise((resolve, reject) => {
       try {
         this._rpcRequest(
-          { method: 'eth_requestAccounts', params: [] },
+          { method: 'platon_requestAccounts', params: [] },
           getRpcPromiseCallback(resolve, reject),
         )
       } catch (error) {
@@ -632,15 +632,15 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
     let result
     switch (payload.method) {
 
-      case 'eth_accounts':
+      case 'platon_accounts':
         result = this.selectedAddress ? [this.selectedAddress] : []
         break
 
-      case 'eth_coinbase':
+      case 'platon_coinbase':
         result = this.selectedAddress || null
         break
 
-      case 'eth_uninstallFilter':
+      case 'platon_uninstallFilter':
         this._rpcRequest(payload, NOOP)
         result = true
         break
