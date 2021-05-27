@@ -9,6 +9,7 @@ const SafeEventEmitter = require('safe-event-emitter')
 const dequal = require('fast-deep-equal')
 const { ethErrors } = require('eth-json-rpc-errors')
 const log = require('loglevel')
+const eutil = require('@alayanetwork/ethereumjs-util')
 
 const messages = require('./messages')
 const { sendSiteMetadata } = require('./siteMetadata')
@@ -76,6 +77,7 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
     this.selectedAddress = null
     this.networkVersion = undefined
     this.chainId = undefined
+    this.hrp = undefined
 
     // bind functions (to prevent e.g. web3@1.x from making unbound calls)
     this._handleAccountsChanged = this._handleAccountsChanged.bind(this)
@@ -125,6 +127,17 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
         this.chainId = state.chainId
         this.emit('chainChanged', this.chainId)
         this.emit('chainIdChanged', this.chainId) // TODO:deprecation:remove
+      }
+
+      // Emit hrpChanged event on hrp change
+      if ('hrp' in state && state.hrp !== this.hrp) {
+        this.hrp = state.hrp
+        if (this.selectedAddress && !this.selectedAddress.startsWith(this.hrp)) {
+          this.selectedAddress = eutil.toBech32Address(this.hrp, eutil.decodeBech32Address(this.selectedAddress))
+        }
+
+        this.emit('hrpChanged', this.hrp)
+        this.emit('hrpChanged', this.hrp) // TODO:deprecation:remove
       }
 
       // Emit networkChanged event on network change
@@ -415,6 +428,14 @@ module.exports = class MetamaskInpageProvider extends SafeEventEmitter {
    * internally initiated request.
    */
   _handleAccountsChanged (accounts, isEthAccounts = false, isInternal = false) {
+
+    accounts = accounts.map((account) => {
+      if (account && !account.startsWith(this.hrp)) {
+        account = eutil.toBech32Address(this.hrp, eutil.decodeBech32Address(account))
+        return account
+      }
+      return account
+    })
 
     let _accounts = accounts
 

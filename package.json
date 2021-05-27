@@ -34,7 +34,8 @@
     "obj-multiplex": "^1.0.0",
     "obs-store": "^4.0.3",
     "pump": "^3.0.0",
-    "safe-event-emitter": "^1.0.1"
+    "safe-event-emitter": "^1.0.1",
+    "@alayanetwork/ethereumjs-util": "^5.2.0"
   },
   "devDependencies": {
     "@metamask/eslint-config": "^2.1.1",
